@@ -1,8 +1,10 @@
 package com.example.kafka101;
 
+import com.example.models.MessageRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -21,7 +23,8 @@ import java.util.concurrent.ExecutionException;
 class Kafka101ApplicationTests {
 
     @Autowired
-    private KafkaTemplate<String, String> template;
+    @Qualifier("messageTemplate")
+    private KafkaTemplate<String, MessageRequest> template;
 
     @Test
     void contextLoads() {
@@ -29,8 +32,8 @@ class Kafka101ApplicationTests {
 
     @Test
     void testSendMessage() throws ExecutionException, InterruptedException {
-        ListenableFuture<SendResult<String, String>>  send = template.send("salah", "ah ha");
-        System.out.println(send.get().toString());
+  template.send("topic2", new MessageRequest("yababababa"));
+//        System.out.println(send.get().toString());
     }
 
 }
