@@ -11,10 +11,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.CommonLoggingErrorHandler;
 import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.ExponentialBackOff;
 import org.springframework.util.backoff.FixedBackOff;
 
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -52,14 +54,12 @@ public class KafkaConfig {
 
     @Bean
     public DefaultErrorHandler errorHandler() {
-        ExponentialBackOff exponentialBackOff = new ExponentialBackOff(2000L, 1.5);
-        exponentialBackOff.setMaxElapsedTime(1000L * 60 * 5); // 5 mins
 
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler((consumerRecord, exception) -> {
-            // logic to execute when all the retry attemps are exhausted
-            log.info("all retries is finished");
-        }, exponentialBackOff);
-        return errorHandler;
+        FixedBackOff fixedBackOff = new FixedBackOff(2000L, 3);
+        return new DefaultErrorHandler((consumerRecord, exception) -> {
+            // logic to execute when all the retry attempts are exhausted
+            log.info("all retries is finished with exception {}", exception.getMessage());
+        }, fixedBackOff);
     }
 
 }

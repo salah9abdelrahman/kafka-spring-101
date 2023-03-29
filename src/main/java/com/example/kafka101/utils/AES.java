@@ -53,9 +53,4 @@ public class AES {
         return null;
     }
 
-    public static void main(String[] args) {
-        AES aes = new AES("secret2", "salt2");
-    }
-
-
 }
